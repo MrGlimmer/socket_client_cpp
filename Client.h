@@ -30,6 +30,8 @@ private:
             protocol = 0;
     char*   ip;
 
+    char* buffer = new char[MAX_SIZE];
+
 public:
     explicit Client(char* ip, int port, Protocol protocol = Protocol::TCP);
     ~Client();
@@ -38,6 +40,7 @@ public:
     void stop();
     // Метод отправки сообщения на сервер
     char* sendMessage(char* message);
+    void clearBuffer();
 };
 
 #endif //SOCKET_CLIENT_CPP_CLIENT_H

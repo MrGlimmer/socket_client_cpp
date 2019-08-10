@@ -41,7 +41,6 @@ void Client::stop() {
 
 char* Client::sendMessage(char* message) {
     // Инициализируем буфер
-    char* buffer = new char;
     auto message_size = strlen(message);
     message_size = message_size < MAX_SIZE ? message_size : MAX_SIZE;
 
@@ -70,4 +69,10 @@ char* Client::sendMessage(char* message) {
     }
 
     return buffer;
+}
+
+void Client::clearBuffer() {
+    // bzero( &buffer, sizeof( buffer  ) );
+    delete[] buffer;
+    buffer = new char[MAX_SIZE];
 }

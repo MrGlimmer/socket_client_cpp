@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cstring>
+#include <limits>
 #include "Client.h"
 
 // TODO: async
@@ -40,6 +41,7 @@ int main(int argc, char *argv[]) {
                 std::cout << "Answer:" << std::endl;
                 std::cout << client->sendMessage(message) << std::endl;
                 std::cout << "**********************" << std::endl;
+                client->clearBuffer();
             }
         } catch (std::runtime_error &e) {
             std::cout << "Run time error: " << e.what() << std::endl;

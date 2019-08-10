@@ -1,9 +1,9 @@
-#include <iostream>
 #include "Client.h"
 
-Client::Client(int port_, char* ip_, Protocol protocol_)
-    : port(port_), ip(ip_), protocol(protocol_)
+Client::Client(char* ip_, int port_, Protocol protocol_)
+    :  ip(ip_), port(port_), protocol(protocol_)
 {
+    // Инициализируем сокет
     sender = socket(AF_INET, protocol, 0);
     if (sender < 0)
     {
@@ -20,7 +20,7 @@ Client::Client(int port_, char* ip_, Protocol protocol_)
     if (protocol == Protocol::TCP)
     {
         // Соединение с сервером при TCP
-        if (connect(sender, (struct sockaddr *) &address, sizeof(address) ) < 0)
+        if (connect(sender, (struct sockaddr *) &address, sizeof(address)) < 0)
         {
             this->stop();
             throw ConnectionException();
@@ -39,9 +39,11 @@ void Client::stop() {
 }
 
 char* Client::sendMessage(char* message) {
+    // Инициализируем буфер
     char* buffer = new char;
     auto message_size = strlen(message);
     message_size = message_size < MAX_SIZE ? message_size : MAX_SIZE;
+
     if (protocol == Protocol::TCP)
     {
         // Отправляем сообщение
@@ -53,9 +55,11 @@ char* Client::sendMessage(char* message) {
     {
         // Отправляем сообщение
         sendto( sender, message, message_size, 0, (struct sockaddr *) &address, sizeof(address) );
+
         // Получаем ответ
         socklen_t address_size = sizeof address;
         int bytes = recvfrom(sender, buffer, MAX_SIZE, 0, (struct sockaddr *) &address, &address_size);
+
         if (bytes <= 0)
         {
             this->stop();

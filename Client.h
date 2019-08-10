@@ -11,26 +11,32 @@
 
 const int MAX_SIZE = 1024;
 
+// Для облегчения восприятия размещаем константы в enum
 enum Protocol : int {
-    TCP =  SOCK_STREAM,
+    TCP = SOCK_STREAM,
     UDP = SOCK_DGRAM
 };
 
 class Client {
 private:
+    // Адрес подключения
     sockaddr_in address = sockaddr_in();
 
-    int     sender = 0,
-            port = 0,
-            protocol = 0;
+    // Сокет
+    int     sender = 0;
 
+    // Вспомогательные атрибуты
+    int     port = 0,
+            protocol = 0;
     char*   ip;
 
 public:
-    explicit Client(int port, char* ip, Protocol protocol = Protocol::TCP);
+    explicit Client(char* ip, int port, Protocol protocol = Protocol::TCP);
     ~Client();
 
+    // Метод остановки работы клиента
     void stop();
+    // Метод отправки сообщения на сервер
     char* sendMessage(char* message);
 };
 

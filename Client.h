@@ -5,7 +5,7 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <unistd.h>
-#include <exception>
+#include <stdexcept>
 #include <cstring>
 #include <arpa/inet.h>
 
@@ -38,39 +38,6 @@ public:
     void stop();
     // Метод отправки сообщения на сервер
     char* sendMessage(char* message);
-};
-
-class SocketCreationException : public std::exception
-{
-public:
-    SocketCreationException() = default;
-    ~SocketCreationException() override = default;
-
-    const char* what() const noexcept override {
-        return "Problem with socket creation.";
-    }
-};
-
-class ConnectionException : public std::exception
-{
-public:
-    ConnectionException() = default;
-    ~ConnectionException() override = default;
-
-    const char* what() const noexcept override {
-        return "Problem with connection to TCP server.";
-    }
-};
-
-class ReceivedException : public std::exception
-{
-public:
-    ReceivedException() = default;
-    ~ReceivedException() override = default;
-
-    const char* what() const noexcept override {
-        return "Problem with getting answer from server.";
-    }
 };
 
 #endif //SOCKET_CLIENT_CPP_CLIENT_H

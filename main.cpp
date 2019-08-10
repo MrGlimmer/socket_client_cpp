@@ -41,12 +41,10 @@ int main(int argc, char *argv[]) {
                 std::cout << client->sendMessage(message) << std::endl;
                 std::cout << "**********************" << std::endl;
             }
-        } catch (SocketCreationException &e) {
-            std::cout << "Socket creation error: " << e.what() << std::endl;
-        } catch (ConnectionException &e) {
-            std::cout << "Connection error: " << e.what() << std::endl;
-        } catch (ReceivedException &e) {
-            std::cout << "Received error: " << e.what() << std::endl;
+        } catch (std::runtime_error &e) {
+            std::cout << "Run time error: " << e.what() << std::endl;
+        } catch (std::exception &e) {
+            std::cout << "Exception: " << e.what() << std::endl;
         }
     }
     else

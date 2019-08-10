@@ -1,3 +1,4 @@
+
 #include "Client.h"
 
 Client::Client(char* ip_, int port_, Protocol protocol_)
@@ -8,7 +9,7 @@ Client::Client(char* ip_, int port_, Protocol protocol_)
     if (sender < 0)
     {
         this->stop();
-        throw SocketCreationException();
+        throw std::runtime_error("Problem with socket creation.");
     }
 
     // Инициализируем адрес
@@ -23,7 +24,7 @@ Client::Client(char* ip_, int port_, Protocol protocol_)
         if (connect(sender, (struct sockaddr *) &address, sizeof(address)) < 0)
         {
             this->stop();
-            throw ConnectionException();
+            throw std::runtime_error("Problem with connection to TCP server.");
         }
     }
 }
@@ -63,7 +64,7 @@ char* Client::sendMessage(char* message) {
         if (bytes <= 0)
         {
             this->stop();
-            throw ReceivedException();
+            throw std::runtime_error("Problem with getting answer from server.");
         }
         buffer[bytes] = '\0';
     }

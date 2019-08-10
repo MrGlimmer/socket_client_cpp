@@ -30,6 +30,7 @@ private:
             protocol = 0;
     char*   ip;
 
+    // Буфер для взаимодействия с сокетами
     char* buffer = new char[MAX_SIZE];
 
 public:
@@ -40,6 +41,7 @@ public:
     void stop();
     // Метод отправки сообщения на сервер
     char* sendMessage(char* message);
+    // Очистка буфера
     void clearBuffer();
 };
 

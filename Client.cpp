@@ -32,6 +32,9 @@ Client::Client(char* ip_, int port_, Protocol protocol_)
 Client::~Client()
 {
     this->stop();
+
+    delete[] buffer;
+    delete[] ip;
 }
 
 void Client::stop() {
@@ -72,7 +75,6 @@ char* Client::sendMessage(char* message) {
 }
 
 void Client::clearBuffer() {
-    // bzero( &buffer, sizeof( buffer  ) );
     delete[] buffer;
     buffer = new char[MAX_SIZE];
 }

@@ -8,6 +8,7 @@
 #include <stdexcept>
 #include <cstring>
 #include <arpa/inet.h>
+#include <vector>
 
 const int MAX_SIZE = 1024;
 
@@ -28,21 +29,20 @@ private:
     // Вспомогательные атрибуты
     int     port = 0,
             protocol = 0;
-    char*   ip;
+
+    std::string ip;
 
     // Буфер для взаимодействия с сокетами
-    char* buffer = new char[MAX_SIZE];
+    std::vector<char> buffer = std::vector<char>();
 
 public:
-    explicit Client(char* ip, int port, Protocol protocol = Protocol::TCP);
+    explicit Client(std::string ip, int port, Protocol protocol = Protocol::TCP);
     ~Client();
 
     // Метод остановки работы клиента
     void stop();
     // Метод отправки сообщения на сервер
-    char* sendMessage(char* message);
-    // Очистка буфера
-    void clearBuffer();
+    std::string* sendMessage(std::string& message);
 };
 
 #endif //SOCKET_CLIENT_CPP_CLIENT_H

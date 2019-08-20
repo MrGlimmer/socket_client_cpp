@@ -1,8 +1,8 @@
-
 #include "Client.h"
 
-Client::Client(char* ip_, int port_, Protocol protocol_)
-    :  ip(ip_), port(port_), protocol(protocol_)
+
+Client::Client(std::string ip_, int port_, Protocol protocol_)
+    : ip(std::move(ip_)), port(port_), protocol(protocol_)
 {
     // Инициализируем сокет
     sender = socket(AF_INET, protocol, 0);
@@ -16,7 +16,7 @@ Client::Client(char* ip_, int port_, Protocol protocol_)
     bzero( &address, sizeof( sockaddr_in  ) );
     address.sin_family = AF_INET;
     address.sin_port = htons(port);
-    address.sin_addr.s_addr = strcmp(ip, "debug") == 0 ? htonl(INADDR_LOOPBACK) : inet_addr(ip);
+    address.sin_addr.s_addr = ip.compare("debug") == 0 ? htonl(INADDR_LOOPBACK) : inet_addr(ip.c_str());
 
     if (protocol == Protocol::TCP)
     {
@@ -32,9 +32,6 @@ Client::Client(char* ip_, int port_, Protocol protocol_)
 Client::~Client()
 {
     this->stop();
-
-    delete[] buffer;
-    delete[] ip;
 }
 
 void Client::stop() {
@@ -42,39 +39,37 @@ void Client::stop() {
     close(sender);
 }
 
-char* Client::sendMessage(char* message) {
+std::string* Client::sendMessage(std::string& message) {
     // Инициализируем буфер
-    auto message_size = strlen(message);
+    auto message_size = message.size();
     message_size = message_size < MAX_SIZE ? message_size : MAX_SIZE;
+
+    buffer.clear();
+    buffer.resize(message_size + 1);
 
     if (protocol == Protocol::TCP)
     {
         // Отправляем сообщение
-        send(sender, message, message_size, 0);
+        send(sender, message.c_str(), message_size, 0);
         // Получаем ответ
-        recv(sender, buffer, MAX_SIZE, 0);
+        recv(sender, &buffer[0], MAX_SIZE, 0);
     }
     else if (protocol == Protocol::UDP)
     {
         // Отправляем сообщение
-        sendto( sender, message, message_size, 0, (struct sockaddr *) &address, sizeof(address) );
+        sendto( sender, message.c_str(), message_size, 0, (struct sockaddr *) &address, sizeof(address) );
 
         // Получаем ответ
         socklen_t address_size = sizeof address;
-        int bytes = recvfrom(sender, buffer, MAX_SIZE, 0, (struct sockaddr *) &address, &address_size);
+        int bytes = recvfrom(sender, &buffer[0], MAX_SIZE, 0, (struct sockaddr *) &address, &address_size);
 
         if (bytes <= 0)
         {
             this->stop();
             throw std::runtime_error("Problem with getting answer from server.");
         }
-        buffer[bytes] = '\0';
+        buffer.at(bytes) = '\0';
     }
 
-    return buffer;
-}
-
-void Client::clearBuffer() {
-    delete[] buffer;
-    buffer = new char[MAX_SIZE];
+    return new std::string(buffer.begin(), buffer.end());
 }

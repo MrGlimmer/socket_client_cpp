@@ -1,20 +1,21 @@
 #include <iostream>
 #include <cstring>
 #include <limits>
+#include <sstream>
 #include "Client.h"
 
 // TODO: async
 
 int main(int argc, char *argv[]) {
     // Инициализируем переменные
-    char*       ip = nullptr;
-    int         port = 3425;
-    Protocol    protocol = Protocol::TCP;
+    std::stringstream   ip;
+    int                 port = 3425;
+    Protocol            protocol = Protocol::TCP;
 
     if (argc > 1)
     {
         // Собираем параметры
-        ip = argv[1];
+        ip << argv[1];
 
         if (argc > 2) port = static_cast<int>(strtol(argv[2], nullptr, 0));
 
@@ -22,7 +23,7 @@ int main(int argc, char *argv[]) {
 
         try {
             // Создаем клиента
-            auto client = new Client(ip, port, protocol);
+            auto client = new Client(ip.str(), port, protocol);
 
             std::cout << "Client launched at port " << port
                       << " and uses " << (protocol == Protocol::TCP ? "TCP" : "UDP")
@@ -31,17 +32,16 @@ int main(int argc, char *argv[]) {
             // Начинаем цикл отправки сообщений, чтобы выйти -> вводим exit
             while (true)
             {
-                char* message = new char();
+                auto message = new std::string();
                 std::cout << "Write message: ";
-                std::cin.getline(message, MAX_SIZE);
+                std::getline(std::cin, *message);
 
-                if (std::strcmp(message, "exit") == 0) break;
+                if (message->compare("exit") == 0) break;
 
                 std::cout << "**********************" << std::endl;
                 std::cout << "Answer:" << std::endl;
-                std::cout << client->sendMessage(message) << std::endl;
+                std::cout << client->sendMessage(*message)->c_str() << std::endl;
                 std::cout << "**********************" << std::endl;
-                client->clearBuffer();
             }
         } catch (std::runtime_error &e) {
             std::cout << "Run time error: " << e.what() << std::endl;
